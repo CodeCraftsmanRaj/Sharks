@@ -1,1 +1,130 @@
 # Sharks
+
+AI-first student engagement ecosystem for Indian students planning higher studies.
+
+## Product thesis
+
+The core USP is a WhatsApp-first experience that acts like a student companion for discovery, guidance, and loan conversion. The public-facing story is a voice-enabled, low-friction, always-available assistant for students with minimal internet dependency. The first working prototype will focus on the WhatsApp journey; the rest of the ecosystem will be simulated or added incrementally.
+
+## Problem statement fit
+
+This prototype addresses the end-to-end student journey:
+
+1. Discovery of countries, universities, and courses
+2. AI-guided doubt solving through chat
+3. Admission likelihood estimation
+4. ROI and salary planning
+5. Loan eligibility and offer discovery
+6. Document collection and auto-fill support
+
+## MVP scope for this build
+
+### Phase 1: WhatsApp-first engagement layer
+- Student onboarding through WhatsApp
+- Conversational mentor for queries
+- Career navigator based on profile inputs
+- Admission probability scoring
+- ROI and salary estimation
+- Loan eligibility check with simulated offers
+
+### Phase 2: Conversion and automation layer
+- Document upload over WhatsApp
+- OCR-based extraction of key fields
+- Auto-fill for loan forms
+- Smart nudges and follow-ups
+
+### Phase 3: Growth and retention layer
+- Personalized journeys
+- Content recommendations
+- Referral and engagement loops
+- Automated reminders for deadlines and next steps
+
+## Proposed user flow
+
+1. User discovers the assistant on WhatsApp
+2. Bot collects profile details in a guided format
+3. AI returns country/course recommendations
+4. Bot estimates admission probability and ROI
+5. Bot checks indicative loan eligibility
+6. User uploads documents on WhatsApp
+7. System extracts data and prepares the loan flow
+
+## Core modules
+
+### 1. AI Conversational Mentor
+Handles student queries about course selection, visa doubts, applications, timelines, and loans.
+
+### 2. AI Career Navigator
+Suggests countries, universities, and courses based on marks, budget, work experience, and preferences.
+
+### 3. Admission Probability Predictor
+Uses rule-based scoring or lightweight heuristics to estimate admission chance.
+
+### 4. ROI and Salary Prediction Engine
+Calculates expected salary, cost of education, and payback period using benchmark salary data and formulas.
+
+### 5. Loan Eligibility and Offer Engine
+Evaluates loan eligibility from academic and financial inputs and shows demo offers aligned with NBFC-style products.
+
+### 6. Document Processing and Auto-Fill
+Extracts data from PAN, admit letter, and income proof uploaded over WhatsApp using OCR.
+
+## AI / API stack needed
+
+### Required for the prototype
+- WhatsApp Cloud API or Twilio WhatsApp API
+- LLM API for chat and personalization
+- OCR API for document extraction
+
+### Optional for later phases
+- Database / auth backend
+- Vector search for memory and knowledge retrieval
+- Analytics and notification APIs
+
+## APIs to implement next
+
+1. WhatsApp inbound webhook handler
+2. WhatsApp outbound message sender
+3. User profile capture endpoint
+4. Recommendation engine endpoint
+5. Admission score endpoint
+6. ROI calculator endpoint
+7. Loan eligibility endpoint
+8. Document upload and OCR endpoint
+9. Auto-fill payload generator endpoint
+10. Conversation state / session storage endpoint
+
+## Environment variables needed
+
+Create a local `.env` file with these keys:
+
+- `WHATSAPP_API_TOKEN`
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `WHATSAPP_VERIFY_TOKEN`
+- `WHATSAPP_APP_SECRET`
+- `LLM_API_KEY`
+- `LLM_MODEL`
+- `OCR_API_KEY`
+- `OCR_API_URL`
+- `DATABASE_URL`
+- `APP_BASE_URL`
+
+## Build order
+
+1. Set up WhatsApp integration skeleton
+2. Add message routing and session state
+3. Implement profile intake flow
+4. Add recommendation and scoring logic
+5. Add ROI and loan eligibility calculators
+6. Add document upload and OCR stubs
+7. Wire the outputs into a polished demo flow
+
+## Notes for the demo
+
+- The prototype can simulate backend logic where needed.
+- The WhatsApp experience is the main differentiator.
+- The system should feel like a complete student companion, not just a chatbot.
+
+## Next step
+
+Implement the WhatsApp API flow first, then layer in the mentor, recommendation, scoring, and loan modules one by one.
