@@ -72,14 +72,75 @@ Extracts data from PAN, admit letter, and income proof uploaded over WhatsApp us
 ## AI / API stack needed
 
 ### Required for the prototype
-- WhatsApp Cloud API or Twilio WhatsApp API
-- LLM API for chat and personalization
-- OCR API for document extraction
+- WhatsApp Cloud API
+- Google Gemini API for LLM/chat
+- PostgreSQL database via Neon or Supabase
 
 ### Optional for later phases
-- Database / auth backend
+- Auth backend
 - Vector search for memory and knowledge retrieval
 - Analytics and notification APIs
+
+## Final stack decision
+
+### 1. WhatsApp provider
+Use Meta WhatsApp Cloud API.
+
+Why:
+- Official API
+- Easy webhook flow
+- Good fit for the WhatsApp-first USP
+
+### 2. LLM provider
+Use Google Gemini API, starting with Gemini Flash models.
+
+Why:
+- Fast
+- Low-cost / free-tier friendly
+- Good enough for chatbot, summarization, and content generation
+
+### 3. Database
+Use PostgreSQL.
+
+Recommended connection style:
+- Local dev: `sqlite:///./sharks.db` if needed for quick testing
+- Hosted dev/prod: `postgresql+psycopg://USER:PASSWORD@HOST:PORT/DBNAME`
+
+Recommended provider:
+- Neon or Supabase Postgres
+
+### 4. OCR
+Keep OCR optional for the end.
+
+Suggested later provider:
+- Google Vision OCR or AWS Textract
+
+## How to generate the required API keys
+
+### WhatsApp Cloud API
+1. Create a Meta Developer app.
+2. Add the WhatsApp product.
+3. Connect a test phone number.
+4. Copy the phone number ID.
+5. Generate a permanent access token.
+6. Set a webhook verify token of your choice.
+
+### Google Gemini API
+1. Open Google AI Studio.
+2. Create a new API key.
+3. Save it as `LLM_API_KEY`.
+4. Set `LLM_MODEL` to a Flash model name.
+
+### PostgreSQL database
+1. Create a Neon or Supabase project.
+2. Create a Postgres database.
+3. Copy the connection string.
+4. Store it in `DATABASE_URL`.
+
+### OCR later
+1. Choose Google Vision or AWS Textract.
+2. Create credentials only when the document flow is added.
+3. Keep the OCR env vars empty until then.
 
 ## APIs to implement next
 
