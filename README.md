@@ -4,11 +4,22 @@ AI-first student engagement ecosystem for Indian students planning higher studie
 
 ## Product thesis
 
-The core USP is a WhatsApp-first experience that acts like a student companion for discovery, guidance, and loan conversion. The public-facing story is a voice-enabled, low-friction, always-available assistant for students with minimal internet dependency. The first working prototype will focus on the WhatsApp journey; the rest of the ecosystem will be simulated or added incrementally.
+The core USP is a WhatsApp-first experience that behaves like a student companion for discovery, guidance, and loan conversion. The prototype is built to feel like a voice-friendly, low-friction, always-available assistant. The first working build focuses on WhatsApp; OCR is intentionally kept optional for later.
+
+## What is implemented
+
+- WhatsApp webhook verification and message handling
+- AI mentor endpoint with Gemini fallback logic
+- Country/course recommendation engine
+- Admission probability scoring
+- ROI and salary estimation engine
+- Loan eligibility and simulated offers
+- Document parsing stub for the future OCR phase
+- SQLite-backed demo storage for profiles, messages, and documents
 
 ## Problem statement fit
 
-This prototype addresses the end-to-end student journey:
+This prototype covers the student journey end to end:
 
 1. Discovery of countries, universities, and courses
 2. AI-guided doubt solving through chat
@@ -17,147 +28,34 @@ This prototype addresses the end-to-end student journey:
 5. Loan eligibility and offer discovery
 6. Document collection and auto-fill support
 
-## MVP scope for this build
-
-### Phase 1: WhatsApp-first engagement layer
-- Student onboarding through WhatsApp
-- Conversational mentor for queries
-- Career navigator based on profile inputs
-- Admission probability scoring
-- ROI and salary estimation
-- Loan eligibility check with simulated offers
-
-### Phase 2: Conversion and automation layer
-- Document upload over WhatsApp
-- OCR-based extraction of key fields
-- Auto-fill for loan forms
-- Smart nudges and follow-ups
-
-### Phase 3: Growth and retention layer
-- Personalized journeys
-- Content recommendations
-- Referral and engagement loops
-- Automated reminders for deadlines and next steps
-
-## Proposed user flow
-
-1. User discovers the assistant on WhatsApp
-2. Bot collects profile details in a guided format
-3. AI returns country/course recommendations
-4. Bot estimates admission probability and ROI
-5. Bot checks indicative loan eligibility
-6. User uploads documents on WhatsApp
-7. System extracts data and prepares the loan flow
-
-## Core modules
-
-### 1. AI Conversational Mentor
-Handles student queries about course selection, visa doubts, applications, timelines, and loans.
-
-### 2. AI Career Navigator
-Suggests countries, universities, and courses based on marks, budget, work experience, and preferences.
-
-### 3. Admission Probability Predictor
-Uses rule-based scoring or lightweight heuristics to estimate admission chance.
-
-### 4. ROI and Salary Prediction Engine
-Calculates expected salary, cost of education, and payback period using benchmark salary data and formulas.
-
-### 5. Loan Eligibility and Offer Engine
-Evaluates loan eligibility from academic and financial inputs and shows demo offers aligned with NBFC-style products.
-
-### 6. Document Processing and Auto-Fill
-Extracts data from PAN, admit letter, and income proof uploaded over WhatsApp using OCR.
-
-## AI / API stack needed
-
-### Required for the prototype
-- WhatsApp Cloud API
-- Google Gemini API for LLM/chat
-- PostgreSQL database via Neon or Supabase
-
-### Optional for later phases
-- Auth backend
-- Vector search for memory and knowledge retrieval
-- Analytics and notification APIs
-
 ## Final stack decision
 
-### 1. WhatsApp provider
-Use Meta WhatsApp Cloud API.
+- WhatsApp provider: Meta WhatsApp Cloud API
+- LLM provider: Google Gemini API
+- Database: SQLite for demo, PostgreSQL later for hosted deployment
+- OCR: optional later, Google Vision or AWS Textract
 
-Why:
-- Official API
-- Easy webhook flow
-- Good fit for the WhatsApp-first USP
+## Project structure
 
-### 2. LLM provider
-Use Google Gemini API, starting with Gemini Flash models.
+- [main.py](main.py) — thin entrypoint
+- [sharks/app.py](sharks/app.py) — FastAPI app factory and router wiring
+- [sharks/config.py](sharks/config.py) — environment settings
+- [sharks/db.py](sharks/db.py) — database connection and schema creation
+- [sharks/schemas.py](sharks/schemas.py) — request models and domain dataclass
+- [sharks/repository.py](sharks/repository.py) — persistence helpers
+- [sharks/services/whatsapp.py](sharks/services/whatsapp.py) — WhatsApp workflow and webhook parsing
+- [sharks/services/llm.py](sharks/services/llm.py) — Gemini integration and fallback mentor logic
+- [sharks/services/recommendations.py](sharks/services/recommendations.py) — career navigator logic
+- [sharks/services/admissions.py](sharks/services/admissions.py) — admission scoring logic
+- [sharks/services/roi.py](sharks/services/roi.py) — ROI calculator
+- [sharks/services/loans.py](sharks/services/loans.py) — loan eligibility engine
+- [sharks/services/documents.py](sharks/services/documents.py) — document parsing stub
+- [sharks/api/routes.py](sharks/api/routes.py) — core REST APIs
+- [sharks/api/whatsapp.py](sharks/api/whatsapp.py) — WhatsApp webhook and send API
 
-Why:
-- Fast
-- Low-cost / free-tier friendly
-- Good enough for chatbot, summarization, and content generation
+## Environment variables
 
-### 3. Database
-Use PostgreSQL.
-
-Recommended connection style:
-- Local dev: `sqlite:///./sharks.db` if needed for quick testing
-- Hosted dev/prod: `postgresql+psycopg://USER:PASSWORD@HOST:PORT/DBNAME`
-
-Recommended provider:
-- Neon or Supabase Postgres
-
-### 4. OCR
-Keep OCR optional for the end.
-
-Suggested later provider:
-- Google Vision OCR or AWS Textract
-
-## How to generate the required API keys
-
-### WhatsApp Cloud API
-1. Create a Meta Developer app.
-2. Add the WhatsApp product.
-3. Connect a test phone number.
-4. Copy the phone number ID.
-5. Generate a permanent access token.
-6. Set a webhook verify token of your choice.
-
-### Google Gemini API
-1. Open Google AI Studio.
-2. Create a new API key.
-3. Save it as `LLM_API_KEY`.
-4. Set `LLM_MODEL` to a Flash model name.
-
-### PostgreSQL database
-1. Create a Neon or Supabase project.
-2. Create a Postgres database.
-3. Copy the connection string.
-4. Store it in `DATABASE_URL`.
-
-### OCR later
-1. Choose Google Vision or AWS Textract.
-2. Create credentials only when the document flow is added.
-3. Keep the OCR env vars empty until then.
-
-## APIs to implement next
-
-1. WhatsApp inbound webhook handler
-2. WhatsApp outbound message sender
-3. User profile capture endpoint
-4. Recommendation engine endpoint
-5. Admission score endpoint
-6. ROI calculator endpoint
-7. Loan eligibility endpoint
-8. Document upload and OCR endpoint
-9. Auto-fill payload generator endpoint
-10. Conversation state / session storage endpoint
-
-## Environment variables needed
-
-Create a local `.env` file with these keys:
+Edit [.env](.env) and fill these later:
 
 - `WHATSAPP_API_TOKEN`
 - `WHATSAPP_PHONE_NUMBER_ID`
@@ -170,22 +68,88 @@ Create a local `.env` file with these keys:
 - `DATABASE_URL`
 - `APP_BASE_URL`
 
-## Build order
+Current local demo values:
 
-1. Set up WhatsApp integration skeleton
-2. Add message routing and session state
-3. Implement profile intake flow
-4. Add recommendation and scoring logic
-5. Add ROI and loan eligibility calculators
-6. Add document upload and OCR stubs
-7. Wire the outputs into a polished demo flow
+- `DATABASE_URL=sqlite:///./sharks.db`
+- `APP_BASE_URL=http://127.0.0.1:8000`
+
+## How to run
+
+1. Install dependencies:
+
+```bash
+uv sync
+```
+
+2. Start the app:
+
+```bash
+uv run python main.py
+```
+
+3. Open the health check:
+
+- [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+
+## How to test quickly
+
+### 1. Root check
+
+Open the base URL:
+
+- [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+### 2. Profile API
+
+Send a profile payload to [POST /api/profile](http://127.0.0.1:8000/docs) using Swagger UI or a REST client.
+
+### 3. Mentor API
+
+Use [POST /api/mentor](http://127.0.0.1:8000/docs) with a WhatsApp ID and message.
+
+### 4. Recommendation and scoring APIs
+
+Test these endpoints from Swagger UI:
+
+- [POST /api/recommend](http://127.0.0.1:8000/docs)
+- [POST /api/admission-score](http://127.0.0.1:8000/docs)
+- [POST /api/roi](http://127.0.0.1:8000/docs)
+- [POST /api/loan-eligibility](http://127.0.0.1:8000/docs)
+
+### 5. WhatsApp webhook
+
+- Verification endpoint: [GET /webhook/whatsapp](http://127.0.0.1:8000/webhook/whatsapp)
+- Inbound message endpoint: [POST /webhook/whatsapp](http://127.0.0.1:8000/webhook/whatsapp)
+- Send message endpoint: [POST /api/whatsapp/send](http://127.0.0.1:8000/docs)
+
+## API flow summary
+
+1. User sends a WhatsApp message.
+2. Webhook extracts sender and text.
+3. System stores the event.
+4. Routing logic decides whether to answer with mentor, recommendation, loan, or ROI output.
+5. Reply is sent back over WhatsApp.
+6. Profile and document data are stored locally.
+
+## OCR note
+
+OCR is intentionally optional for now. The document module currently parses raw text in demo mode and can be connected to Google Vision or AWS Textract later.
+
+## Build order used
+
+1. Modularized the backend into separate files
+2. Wired the FastAPI app factory
+3. Moved WhatsApp handling into its own service and router
+4. Split recommendation, admission, ROI, loan, and document logic into services
+5. Kept the database simple with SQLite for the demo
+6. Added run and test instructions here in the README
 
 ## Notes for the demo
 
-- The prototype can simulate backend logic where needed.
-- The WhatsApp experience is the main differentiator.
-- The system should feel like a complete student companion, not just a chatbot.
+- The WhatsApp experience is the primary differentiator.
+- The backend is modular and easy to extend.
+- The system is ready for real keys when you add them.
 
 ## Next step
 
-Implement the WhatsApp API flow first, then layer in the mentor, recommendation, scoring, and loan modules one by one.
+Add your API keys to [.env](.env), start the app, and test each endpoint in Swagger UI or with WhatsApp Cloud API webhooks.

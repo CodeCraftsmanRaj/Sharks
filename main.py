@@ -1,5 +1,10 @@
-def main():
-    print("Hello from sharks!")
+from sharks.app import app
+
+
+def main() -> None:
+    import uvicorn
+
+    uvicorn.run("sharks.app:app", host="0.0.0.0", port=8000, reload=True)
 
 
 if __name__ == "__main__":
