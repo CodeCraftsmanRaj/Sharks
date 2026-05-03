@@ -37,10 +37,32 @@ async def send_whatsapp_message(to: str, text: str) -> dict[str, Any]:
     url = f"https://graph.facebook.com/v19.0/{settings.whatsapp_phone_number_id}/messages"
     headers = {"Authorization": f"Bearer {settings.whatsapp_api_token}", "Content-Type": "application/json"}
     payload = {"messaging_product": "whatsapp", "to": to, "type": "text", "text": {"body": text}}
-    async with httpx.AsyncClient(timeout=20) as client:
-        response = await client.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        return response.json()
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            response = await client.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            data["status"] = "sent"
+            return data
+    except httpx.HTTPStatusError as exc:
+        error_detail = ""
+        try:
+            error_json = exc.response.json()
+            if "error" in error_json:
+                error_detail = error_json["error"].get("message", "")
+                error_code = error_json["error"].get("code", "")
+                if error_code == 131030:
+                    error_detail += " [FIX: Add recipient phone number to WhatsApp Cloud API test recipient list]"
+        except Exception:
+            pass
+        return {
+            "status": "failed",
+            "error": str(exc),
+            "error_detail": error_detail,
+            "response": exc.response.text,
+        }
+    except httpx.HTTPError as exc:
+        return {"status": "failed", "error": str(exc)}
 
 
 def route_user_message(sender: str, message: str) -> str:
@@ -83,6 +105,12 @@ def route_user_message(sender: str, message: str) -> str:
 
     if any(keyword in lower for keyword in ["roi", "salary", "return"]):
         return "Send course, country, tuition cost, living cost, and duration so I can calculate ROI and payback period."
+
+    if any(keyword in lower for keyword in ["document", "ocr", "upload", "pan", "admit"]):
+        return (
+            "OCR is currently in demo mode. You can still upload document text and I will return dummy/parsed fields "
+            "for PAN, admit letter, and income proof workflows."
+        )
 
     return "Got it. I can help with admissions, ROI, loans, and documents. Try sending your profile details or ask a specific question."
 

@@ -55,9 +55,9 @@ def create_profile(payload: ProfileIn) -> dict[str, Any]:
 @router.post("/api/mentor")
 async def mentor(payload: MentorIn) -> dict[str, Any]:
     save_event(payload.whatsapp_id, "user", payload.message)
-    reply = await mentor_reply(payload.whatsapp_id, payload.message)
+    reply, mode = await mentor_reply(payload.whatsapp_id, payload.message)
     save_event(payload.whatsapp_id, "assistant", reply)
-    return {"reply": reply, "mode": "llm"}
+    return {"reply": reply, "mode": mode}
 
 
 @router.post("/api/recommend")

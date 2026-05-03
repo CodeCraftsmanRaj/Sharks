@@ -22,9 +22,9 @@ def fallback_mentor_reply(message: str, profile: StudentProfile | None = None) -
     return "I am your student mentor. Send your marks, budget, target country, or course field, and I will guide you step by step."
 
 
-async def gemini_chat(message: str, profile: StudentProfile | None = None) -> str:
+async def gemini_chat(message: str, profile: StudentProfile | None = None) -> tuple[str, str]:
     if not settings.llm_api_key:
-        return fallback_mentor_reply(message, profile)
+        return fallback_mentor_reply(message, profile), "fallback"
 
     profile_hint = ""
     if profile:
@@ -41,19 +41,24 @@ async def gemini_chat(message: str, profile: StudentProfile | None = None) -> st
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.5, "maxOutputTokens": 250},
     }
-    async with httpx.AsyncClient(timeout=20) as client:
-        response = await client.post(url, json=payload)
-        response.raise_for_status()
-        data = response.json()
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            response = await client.post(url, json=payload)
+            response.raise_for_status()
+            data = response.json()
+    except httpx.HTTPError:
+        return fallback_mentor_reply(message, profile), "fallback"
     candidates = data.get("candidates", [])
     if not candidates:
-        return fallback_mentor_reply(message, profile)
+        return fallback_mentor_reply(message, profile), "fallback"
     parts = candidates[0].get("content", {}).get("parts", [])
     texts = [part.get("text", "") for part in parts if isinstance(part, dict)]
     reply = " ".join(texts).strip()
-    return reply or fallback_mentor_reply(message, profile)
+    if reply:
+        return reply, "llm"
+    return fallback_mentor_reply(message, profile), "fallback"
 
 
-async def mentor_reply(whatsapp_id: str, message: str) -> str:
+async def mentor_reply(whatsapp_id: str, message: str) -> tuple[str, str]:
     profile = latest_profile(whatsapp_id)
     return await gemini_chat(message, profile)

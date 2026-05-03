@@ -18,5 +18,6 @@ def parse_document_text(raw_text: str | None) -> dict[str, Any]:
     for key, pattern in patterns.items():
         match = re.search(pattern, raw_text, flags=re.IGNORECASE)
         if match:
-            fields[key] = match.group(1).strip()
+            value = match.group(1) if match.lastindex else match.group(0)
+            fields[key] = value.strip()
     return {"message": "Document parsed in demo mode.", "fields": fields}

@@ -52,6 +52,10 @@ This prototype covers the student journey end to end:
 - [sharks/services/documents.py](sharks/services/documents.py) — document parsing stub
 - [sharks/api/routes.py](sharks/api/routes.py) — core REST APIs
 - [sharks/api/whatsapp.py](sharks/api/whatsapp.py) — WhatsApp webhook and send API
+- [sharks/api/frontend.py](sharks/api/frontend.py) — dashboard route
+- [sharks/web/index.html](sharks/web/index.html) — frontend UI
+- [sharks/web/static/app.js](sharks/web/static/app.js) — frontend API wiring
+- [sharks/web/static/style.css](sharks/web/static/style.css) — frontend styling
 
 ## Environment variables
 
@@ -63,8 +67,6 @@ Edit [.env](.env) and fill these later:
 - `WHATSAPP_APP_SECRET`
 - `LLM_API_KEY`
 - `LLM_MODEL`
-- `OCR_API_KEY`
-- `OCR_API_URL`
 - `DATABASE_URL`
 - `APP_BASE_URL`
 
@@ -90,6 +92,9 @@ uv run python main.py
 3. Open the health check:
 
 - [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+4. Open the frontend dashboard:
+
+- [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
 
 ## How to test quickly
 
@@ -98,6 +103,12 @@ uv run python main.py
 Open the base URL:
 
 - [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+### 1.1 Frontend check
+
+Open the dashboard and test APIs from forms:
+
+- [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
 
 ### 2. Profile API
 
